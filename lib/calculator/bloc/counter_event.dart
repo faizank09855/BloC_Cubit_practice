@@ -1,13 +1,12 @@
 part of 'counter_bloc.dart';
 
 /// The events which `CounterBloc` will react to.
-abstract class CounterEvent {}
+abstract class CounterEvent extends Equatable{}
 
 /// Notifies bloc to increment state.
-class Increment extends CounterEvent {
-
-}
-class decrement extends CounterEvent {
+class FetchCounterEvent extends CounterEvent{
+  @override
+  List<Object> get props => throw UnimplementedError();
 
 }
 /// A `CounterBloc` which handles converting `CounterEvent`s into `int`s.

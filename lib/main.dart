@@ -1,16 +1,12 @@
-import 'dart:developer';
-
-import 'dart:developer';
-
-import 'package:bloc_with_cubit/calculator/bloc/counter_bloc.dart';
+import 'package:bloc_with_cubit/calculator/model/home_screen_model.dart';
+import 'package:bloc_with_cubit/calculator/repository/home_screen_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'calculator/bloc/counter_bloc.dart';
+
 void main() {
-  runApp(BlocProvider(
-    create: (context) => CounterBloc(),
-    child: MyApp(),
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -23,29 +19,33 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              BlocBuilder<CounterBloc, CounterState>(
-                builder: (context, state) {
-                  return Text(state.a.toString());
-                },
+    return BlocProvider(
+      create: (context) =>
+          CounterBloc( repository: HomeScreenRepository(),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  FloatingActionButton(onPressed: () {
-                    BlocProvider.of<CounterBloc>(context).add(decrement());
-                  }, child: Text('-')),
-                  FloatingActionButton(onPressed: () {
-                    BlocProvider.of<CounterBloc>(context).add(Increment());
-                  }, child: Text('+')),
-                ],
-              )
-            ],
-          ),
-        ));
+      child: MaterialApp(
+          home: Scaffold(
+            body: BlocBuilder<CounterBloc, CounterState>(
+              builder: (context, state) {
+                if (state is IntialCounterState) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is CounterErrorState) {
+                  return Center(child: Text(state.ErrorMsg));
+                } else if (state is CounterLoadingState) {
+                  return CircularProgressIndicator();
+                } else if (state is CounterLoadedState) {
+                  return ListView.builder(itemCount: state.Counter!.length,
+                    itemBuilder: (BuildContext context, pos) {
+                      return ListTile(
+                        title: Text(state.Counter![pos].title),
+                      );
+                    },);
+                } else {
+                  return Center(child: Text('error'));
+                }
+              },
+            ),
+          )),
+    );
   }
 }
