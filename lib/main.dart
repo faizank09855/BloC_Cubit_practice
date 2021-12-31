@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
           }
           if (state is CounterLoadedState) {
             dataTransfer(state.Counter);
-            return _searchResult.isEmpty ? ListView.builder(
+            return searchController.text.isEmpty ? ListView.builder(
               itemCount: state.Counter!.length,
               itemBuilder: (BuildContext context, pos) {
                 return Padding(
@@ -117,10 +117,11 @@ class _MyAppState extends State<MyApp> {
                   padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
                   child: Dismissible(
+
                     key: ValueKey<int>(_searchResult[pos].id),
                     onDismissed: (DismissDirection direction) {
                       setState(() {
-                        state.Counter!.removeAt(pos);
+                        _searchResult.removeAt(pos);
                       });
                     },
                     child: ListTile(
